@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * To shorten and recover url
@@ -22,9 +23,9 @@ public class TinyURLServiceImpl implements TinyURLService {
      * long id (increment)
      * varchar url
      */
-    private Map<String, Long> strToLongMap = new HashMap<String, Long>();
-    private Map<Long, String> longToStrMap = new HashMap<Long, String>();
-    private volatile long incre = 0L;
+    private Map<String, Long> strToLongMap = new ConcurrentHashMap<String, Long>();
+    private Map<Long, String> longToStrMap = new ConcurrentHashMap<Long, String>();
+    private volatile long incre = 1024L;
 
     @Override
     public String shortenURL(String urlInput) {
@@ -36,7 +37,9 @@ public class TinyURLServiceImpl implements TinyURLService {
             strToLongMap.computeIfAbsent(urlInput, k -> incre++);
             longToStrMap.computeIfAbsent(incre, k -> urlInput);
             String path = '/' + TinyURLShortenUtil.to62Digits(strToLongMap.get(urlInput));
-            return new URL(url.getProtocol(), url.getHost(), path).toString();
+            String result = new URL(url.getProtocol(), url.getHost(), path).toString();
+            System.out.println(urlInput +" -> " + result);
+            return result;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -51,6 +54,10 @@ public class TinyURLServiceImpl implements TinyURLService {
             throw new IllegalArgumentException("The given hash input can not be empty");
         }
         long id = TinyURLShortenUtil.toLong(hashInput);
-        return longToStrMap.get(id);
+        String url = longToStrMap.get(id);
+        if (url != null) {
+            System.out.println(hashInput + " -> "+url);
+        }
+        return url;
     }
 }
