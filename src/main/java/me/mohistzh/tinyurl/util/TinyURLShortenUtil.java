@@ -1,5 +1,12 @@
 package me.mohistzh.tinyurl.util;
 
+import com.sun.javafx.webkit.CursorManagerImpl;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 /**
  * A utility static class to generate shorten url from given URL path.
  *
@@ -50,6 +57,28 @@ public class TinyURLShortenUtil {
             }
         }
         return result;
+
+    }
+
+    /**
+     * Check whether is valid url
+     * @param urlString
+     * @return
+     */
+    public static boolean isValidURL(String urlString) {
+        if (urlString == null || "".equals(urlString)) {
+            return false;
+        }
+        URI uri = null;
+        try {
+             uri = new URI(urlString);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return uri.getHost() != null && (uri.getScheme().equalsIgnoreCase("http") || uri.getScheme().equalsIgnoreCase("https"));
+
 
     }
 

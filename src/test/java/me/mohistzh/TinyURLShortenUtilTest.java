@@ -15,4 +15,10 @@ public class TinyURLShortenUtilTest {
         System.out.println(TinyURLShortenUtil.to62Digits(TinyURLShortenUtil.toLong("baidudsadsdsadsa")));
     }
 
+    @Test
+    public void testIsValidURL() {
+        assert TinyURLShortenUtil.isValidURL("https://google.com");
+        assert TinyURLShortenUtil.isValidURL("https:/google.com");
+
+    }
 }

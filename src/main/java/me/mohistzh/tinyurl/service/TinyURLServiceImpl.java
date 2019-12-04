@@ -29,8 +29,8 @@ public class TinyURLServiceImpl implements TinyURLService {
 
     @Override
     public String shortenURL(String urlInput) {
-        if (urlInput == null || "".equals(urlInput)) {
-            throw new IllegalArgumentException("URL can not be empty");
+        if (!TinyURLShortenUtil.isValidURL(urlInput)) {
+            throw new IllegalArgumentException("URL is invalid: " + urlInput);
         }
         try {
             URL url = new URL(urlInput);
