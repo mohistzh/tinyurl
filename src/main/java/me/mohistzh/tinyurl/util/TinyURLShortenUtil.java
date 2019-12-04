@@ -1,11 +1,7 @@
 package me.mohistzh.tinyurl.util;
 
-import com.sun.javafx.webkit.CursorManagerImpl;
-
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * A utility static class to generate shorten url from given URL path.
