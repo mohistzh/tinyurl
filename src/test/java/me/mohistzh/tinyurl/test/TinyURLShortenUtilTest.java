@@ -1,4 +1,4 @@
-package me.mohistzh;
+package me.mohistzh.tinyurl.test;
 
 import me.mohistzh.tinyurl.util.TinyURLShortenUtil;
 import org.junit.Test;

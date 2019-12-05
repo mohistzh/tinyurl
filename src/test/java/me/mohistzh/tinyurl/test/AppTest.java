@@ -1,4 +1,4 @@
-package me.mohistzh;
+package me.mohistzh.tinyurl.test;
 
 import static org.junit.Assert.assertTrue;
 

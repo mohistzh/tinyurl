@@ -1,5 +1,6 @@
 package me.mohistzh.tinyurl.service;
 
+
 public interface TinyURLService {
 
     public String shortenURL(String urlInput);
