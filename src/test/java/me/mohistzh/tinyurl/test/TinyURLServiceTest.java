@@ -23,6 +23,10 @@ public class TinyURLServiceTest {
     public void testShortenURL() {
         tinyURLService.shortenURL("https://class.hujiang.com/category/514");
     }
+    @Test
+    public void testRecoverURL() {
+        System.out.println(tinyURLService.recoverURL("1"));
+    }
 
 
 }
