@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.mohistzh.tinyurl.mapper.TinyUrlMapper">
+    
+    <insert id="saveTinyUrl" parameterType="TinyUrl" useGeneratedKeys="true" keyProperty="po.id" keyColumn="id">
+        INSERT INTO tinyurl(url) VALUES(#{po.url})
+    </insert>
+
+    <select id="getTinyUrlById" parameterType="long" resultType="TinyUrl">
+        SELECT id, url, created_at FROM tinyurl WHERE id = #{id}
+    </select>
+
+    <select id="getTinyUrlByUrl" parameterType="string" resultType="TinyUrl">
+        SELECT id, url, created_at FROM tinyurl WHERE url = #{url}
+    </select>
+
+</mapper>

@@ -1,31 +1,31 @@
 package me.mohistzh.tinyurl.service;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+import me.mohistzh.tinyurl.mapper.TinyUrlMapper;
+import me.mohistzh.tinyurl.model.TinyUrl;
 import me.mohistzh.tinyurl.util.TinyURLShortenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * To shorten and recover url
  * @Author Jonathan
  * @Date 2019/12/4
  **/
+@Slf4j
+@Service
 public class TinyURLServiceImpl implements TinyURLService {
 
-
-    /**
-     * TODO there should be use database to persist URL, long value is designed for associating with URL
-     * e.g.
-     *
-     * long id (increment)
-     * varchar url
-     */
-    private Map<String, Long> strToLongMap = new ConcurrentHashMap<String, Long>();
-    private Map<Long, String> longToStrMap = new ConcurrentHashMap<Long, String>();
-    private volatile long incre = 1024L;
+    @Autowired
+    TinyUrlMapper tinyUrlMapper;
 
     @Override
     public String shortenURL(String urlInput) {
@@ -34,9 +34,12 @@ public class TinyURLServiceImpl implements TinyURLService {
         }
         try {
             URL url = new URL(urlInput);
-            strToLongMap.computeIfAbsent(urlInput, k -> incre++);
-            longToStrMap.computeIfAbsent(incre, k -> urlInput);
-            String path = '/' + TinyURLShortenUtil.to62Digits(strToLongMap.get(urlInput));
+            TinyUrl tinyUrl = tinyUrlMapper.getTinyUrlByUrl(urlInput);
+            if (tinyUrl == null) {
+                tinyUrl = TinyUrl.of(urlInput);
+                tinyUrlMapper.saveTinyUrl(tinyUrl);
+            }
+            String path = '/' + TinyURLShortenUtil.to62Digits(tinyUrl.getId());
             String result = new URL(url.getProtocol(), url.getHost(), path).toString();
             System.out.println(urlInput +" -> " + result);
             return result;
@@ -48,16 +51,30 @@ public class TinyURLServiceImpl implements TinyURLService {
 
     }
 
+    private LoadingCache<Long, TinyUrl> cachedTinyUrl = CacheBuilder.newBuilder().maximumSize(100_000)
+            .expireAfterWrite(10, TimeUnit.MINUTES).build(new CacheLoader<Long, TinyUrl>() {
+                @Override
+                public TinyUrl load(Long id) throws Exception {
+                    TinyUrl url = tinyUrlMapper.getTinyUrlById(id);
+                    if (url != null) {
+                        return url;
+                    }
+                    return TinyUrl.of(null);
+                }
+            });
     @Override
     public String recoverURL(String hashInput) {
         if (hashInput == null || "".equals(hashInput)) {
             throw new IllegalArgumentException("The given hash input can not be empty");
         }
-        long id = TinyURLShortenUtil.toLong(hashInput);
-        String url = longToStrMap.get(id);
-        if (url != null) {
-            System.out.println(hashInput + " -> "+url);
+        try {
+            long id = TinyURLShortenUtil.toLong(hashInput);
+
+            TinyUrl tinyUrl = cachedTinyUrl.get(id);
+            return tinyUrl.getUrl();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+            return null;
         }
-        return url;
     }
 }
