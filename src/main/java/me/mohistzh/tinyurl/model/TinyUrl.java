@@ -1,4 +1,4 @@
-package me.mohistzh.tinyurl.pojo;
+package me.mohistzh.tinyurl.model;
 
 
 import lombok.Data;

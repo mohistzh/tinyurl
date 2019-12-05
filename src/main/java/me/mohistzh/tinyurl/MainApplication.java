@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Date 2019/12/4
  **/
 @SpringBootApplication
-@MapperScan(basePackages = "me.mohistzh.tinyurl.dao")
+@MapperScan("me.mohistzh.tinyurl.mapper")
 public class MainApplication {
 
     public static void main(String[] args) {
