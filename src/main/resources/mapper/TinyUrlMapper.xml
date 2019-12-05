@@ -10,4 +10,9 @@
     <select id="getTinyUrlById" parameterType="long" resultType="TinyUrl">
         SELECT id, url, created_at FROM tinyurl WHERE id = #{id}
     </select>
+
+    <select id="getTinyUrlByUrl" parameterType="string" resultType="TinyUrl">
+        SELECT id, url, created_at FROM tinyurl WHERE url = #{url}
+    </select>
+
 </mapper>

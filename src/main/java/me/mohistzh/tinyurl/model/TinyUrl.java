@@ -16,5 +16,11 @@ public class TinyUrl {
     private String url;
     private Timestamp createdAt;
 
+    public static TinyUrl of(String url) {
+        TinyUrl tinyUrl = new TinyUrl();
+        tinyUrl.url = url;
+        return tinyUrl;
+    }
+
 
 }
