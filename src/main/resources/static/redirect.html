@@ -6,6 +6,9 @@
 </head>
 <body>
 <input type="hidden" value="$(VALUE)">
-<script src="redirect.js" type="test/javascript" />
+<!-- to use remote url instead of it -->
+<script type="text/javascript">
+    location.href = document.querySelector("input[type='hidden']").value;
+</script>
 </body>
 </html>

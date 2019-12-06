@@ -32,6 +32,7 @@ public class APIResponse<T> {
         APIResponse<V> result = new APIResponse<V>();
         result.setMessage(message);
         result.setStatus(-1);
+        result.setTime(new Date());
         return result;
     }
 
@@ -39,6 +40,7 @@ public class APIResponse<T> {
         APIResponse<V> result = new APIResponse<V>();
         result.setStatus(status);
         result.setMessage(message);
+        result.setTime(new Date());
         return result;
     }
 
@@ -47,6 +49,7 @@ public class APIResponse<T> {
         result.setStatus(0);
         result.setMessage("success");
         result.setData(data);
+        result.setTime(new Date());
         return result;
     }
 
@@ -54,6 +57,7 @@ public class APIResponse<T> {
         APIResponse<V> result = new APIResponse<V>();
         result.setMessage(message);
         result.setData(data);
+        result.setTime(new Date());
         return result;
     }
 

@@ -28,6 +28,7 @@ public class TinyURLShortenUtil {
             'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
             't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
+
     /**
      * Base 62 numbers of characters (including 0~9,A~Z,a~z)
      * @param input
@@ -96,6 +97,7 @@ public class TinyURLShortenUtil {
         return builder.build().toUriString();
 
     }
+
 
     public static boolean isEncoded(String input) {
         return isEncoded(input, StandardCharsets.UTF_8);
