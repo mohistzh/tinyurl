@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  *
  *
@@ -22,6 +24,11 @@ public class TinyURLController {
     @Autowired
     TinyURLService tinyURLService;
 
+    /***
+     * To shorten original long url
+     * @param originalUrl
+     * @return
+     */
     @ResponseBody
     @CrossOrigin("*")
     @RequestMapping(value = "/shorten", method = RequestMethod.POST)
@@ -34,6 +41,11 @@ public class TinyURLController {
         return APIResponse.success(TinyUrlResponse.of(originalUrl, decoratedUrl));
     }
 
+    /**
+     * Recover long original url by given path
+     * @param path
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/recover", method = RequestMethod.POST)
     public APIResponse<Object> recoverTinyUrl(String path) {
@@ -43,6 +55,23 @@ public class TinyURLController {
         }
         return APIResponse.success(originalUrl);
 
+    }
+
+    /**
+     * Redirect to the original url
+     * @param path
+     * @param response
+     */
+    @RequestMapping(value = "{path}", method = RequestMethod.GET)
+    public void redirectUrl(@PathVariable("path") String path, HttpServletResponse response) throws Exception{
+
+        String originalUrl = tinyURLService.recoverURL(path);
+        if (originalUrl != null) {
+            String finalUrl = TinyURLShortenUtil.endcodeParameters(originalUrl);
+            response.sendRedirect(finalUrl);
+        } else {
+            response.sendError(404, "Page not found");
+        }
     }
 
 }
