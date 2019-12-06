@@ -1,7 +1,19 @@
 package me.mohistzh.tinyurl.util;
 
+import me.mohistzh.tinyurl.model.TinyUrl;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 
 /**
  * A utility static class to generate shorten url from given URL path.
@@ -53,6 +65,54 @@ public class TinyURLShortenUtil {
             }
         }
         return result;
+
+    }
+
+    public static String endcodeParameters(String originalUrl) throws Exception{
+
+        URI uri = new URI(originalUrl);
+        MultiValueMap<String, String> parameterMap = UriComponentsBuilder.fromUri(uri).build().getQueryParams();
+        UriComponentsBuilder builder = UriComponentsBuilder.newInstance().scheme(uri.getScheme()).host(uri.getHost()).port(uri.getPort()).path(uri.getPath()).fragment(uri.getRawFragment());
+        for (Map.Entry<String, List<String>> entry : parameterMap.entrySet()) {
+            String key = entry.getKey();
+            if (isEncoded(key)) {
+                key = URLEncoder.encode(key, StandardCharsets.UTF_8.name());
+            }
+            List<String> values = new ArrayList<String>(entry.getValue().size());
+            for (String value  : entry.getValue()) {
+                if (value == null) {
+                    continue;
+                }
+                String newValue = value;
+                if (isEncoded(value)) {
+                    newValue = URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+                }
+                values.add(newValue);
+            }
+
+            builder.queryParam(key, values.toArray());
+
+        }
+        return builder.build().toUriString();
+
+    }
+
+    public static boolean isEncoded(String input) {
+        return isEncoded(input, StandardCharsets.UTF_8);
+    }
+
+    public static boolean isEncoded(String input, Charset charset) {
+        charset = charset == null? StandardCharsets.UTF_8 : charset;
+        try {
+            String decoded = URLDecoder.decode(input, charset.name());
+            return !decoded.equals(input);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getCause());
+        } catch (Exception e) {
+            return false;
+        }
+
+
 
     }
 
