@@ -6,10 +6,13 @@ import me.mohistzh.tinyurl.model.TinyUrlResponse;
 import me.mohistzh.tinyurl.service.TinyURLService;
 import me.mohistzh.tinyurl.util.TinyURLShortenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -23,6 +26,8 @@ public class TinyURLController {
 
     @Autowired
     TinyURLService tinyURLService;
+
+    private Resource redirectPage = new ClassPathResource("static/redirect.html");
 
     /***
      * To shorten original long url
@@ -58,7 +63,7 @@ public class TinyURLController {
     }
 
     /**
-     * Redirect to the original url
+     * Redirect to the original url, before done that I added a redirect page in order to do something.
      * @param path
      * @param response
      */
@@ -68,7 +73,9 @@ public class TinyURLController {
         String originalUrl = tinyURLService.recoverURL(path);
         if (originalUrl != null) {
             String finalUrl = TinyURLShortenUtil.endcodeParameters(originalUrl);
-            response.sendRedirect(finalUrl);
+            String content = StreamUtils.copyToString(redirectPage.getInputStream(), StandardCharsets.UTF_8);
+            content = content.replace("$(VALUE)", finalUrl);
+            StreamUtils.copy(content.getBytes(StandardCharsets.UTF_8), response.getOutputStream());
         } else {
             response.sendError(404, "Page not found");
         }
