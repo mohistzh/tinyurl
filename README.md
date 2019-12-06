@@ -5,7 +5,7 @@
 
 ## Example
 
-The service provides two Web APIs to shorten or recover url by settings.
+The service provides two Web APIs to shorten or recover url by settings. The decorated url uses 62-base characters(a~z,A~Z,0~9) as their fundamental digitals which means it supports 916,132,832 links with 5 digitals, no worries about the range. 
 
 **URL shortening**
 
