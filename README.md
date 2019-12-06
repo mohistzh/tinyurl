@@ -24,7 +24,7 @@ curl -d 'url=https://news.google.com/?hl=en-PH' -H 'Content-Type:application/x-w
 }
 ```
 
-URL recover
+**URL recover**
 
 ```$xslt
 curl -d 'path=1' -H 'Content-Type:application/x-www-form-urlencoded' localhost:8964/recover | json_pp
